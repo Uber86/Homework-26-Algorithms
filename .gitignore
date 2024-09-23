@@ -1,5 +1,7 @@
 ### IntelliJ IDEA ###
 out/
+/Homework26 Algorithms.iml
+/.idea/
 !**/src/main/**/out/
 !**/src/test/**/out/
 
