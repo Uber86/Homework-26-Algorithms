@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 public class IntegerListImplTwo implements IntegerList {
 
-    private final Integer[] list;
+    private Integer[] list;
     private Integer maxNumber;
 
     public IntegerListImplTwo() {
@@ -20,17 +20,17 @@ public class IntegerListImplTwo implements IntegerList {
     @Override
     public Integer add(Integer item) {
         validateItem(item);
-        validateSize();
+        growIfNeeded();
         list[maxNumber++] = item;
         return item;
     }
 
     @Override
     public Integer add(int index, Integer item) {
-        validateSize();
+        growIfNeeded();
         validateItem(item);
         validateIndex(index);
-
+        grow();
         if (index == maxNumber) {
             list[maxNumber++] = item;
             return item;
@@ -145,9 +145,9 @@ public class IntegerListImplTwo implements IntegerList {
         }
     }
 
-    private void validateSize() {
+    private void growIfNeeded() {
         if (maxNumber == list.length) {
-            throw new IsFullExceptionException();
+            grow();
         }
     }
 
@@ -160,15 +160,38 @@ public class IntegerListImplTwo implements IntegerList {
     // ДЗ 2 часть
 
     private void sort(Integer[] list) {
-        for (int i = 1; i < list.length; i++) {
-            int temp = list[i];
-            int j = i;
-            while (j > 0 && list[j - 1] >= temp) {
-                list[j] = list[j - 1];
-                j--;
-            }
-            list[j] = temp;
+        quickSort(list, 0, list.length -1);
+    }
+
+    private void quickSort(Integer[] list, int begin, int end ) {
+        if (begin < end) {
+            int partitionIndex = partition(list, begin, end);
+
+            quickSort(list, begin, partitionIndex - 1);
+            quickSort(list, partitionIndex + 1, end);
         }
+    }
+
+    private int partition(Integer[] list, int begin, int end) {
+        int pivot = list[end];
+        int i = (begin - 1);
+
+        for (int j = begin; j < end; j++) {
+            if (list[j] <= pivot) {
+                i++;
+
+                swapElements(list, i, j);
+            }
+        }
+
+        swapElements(list, i + 1, end);
+        return i + 1;
+    }
+
+    private void swapElements(Integer[] list, int i1, int i2) {
+        int temp = list[i1];
+        list[i1] = list[i2];
+        list[i2] = temp;
     }
 
     public static boolean binContains(Integer[] list, Integer item) {
@@ -191,5 +214,13 @@ public class IntegerListImplTwo implements IntegerList {
         return false;
     }
 
+    // ДЗ 3
 
+    private void grow() {
+        list = Arrays.copyOf(list, maxNumber + maxNumber / 2);
+
+
+    }
 }
+
+
